@@ -1,0 +1,25 @@
+{
+  "name": "node_film",
+  "authors": [
+    "Jipeng Huang <1319639755@qq.com>"
+  ],
+  "description": "node_film movie",
+  "main": "",
+  "keywords": [
+    "node_film"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}
