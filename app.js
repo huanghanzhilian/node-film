@@ -45,10 +45,88 @@ app.set('views','./views/pages');       // 设置视图默认的文件路径
 app.set('view engine','jade');          // 设置视图引擎：jade
 
 var Movie=require('./models/movie.js');  // 载入mongoose编译后的模型movie
-
+var User=require('./models/user.js');  // 载入mongoose编译后的模型user
 
 
 // 编写主要页面路由
+
+//signup
+//post参数第一个路由，第二个回掉方法
+//回掉方法参数request请求
+//回掉方法参数response响应体
+app.post('/user/signup',function(req,res){
+    //获取表单数据
+    var _user=req.body.user;
+    //查找输入用户名是否已存在
+    User.findOne({name:_user.name},function(err,user){
+        if(err){
+            console.log(err)
+        }
+        if(user){
+            return res.redirect('/');
+        }else{
+            //生成用户数据
+            var user=new User(_user);
+            //保存数据方法
+            user.save(function(err,user){
+                if (err) {
+                    console.log(err)
+                }
+                //重定向到首页
+                res.redirect('/admin/userlist');
+            })
+        }
+    })
+})
+
+// userlist 列表页
+app.get('/admin/userlist', function (req, res) {
+    User.fetch(function (err, users) {
+        if (err) {
+            console.log(err);
+        }
+        res.render('userlist', {//视图views
+            title: '用户列表页',
+            users: users
+        });
+    });
+});
+
+//signin
+app.post('/user/signin',function(req,res){
+    //拿到表单提交的user
+    var _user=req.body.user;
+    var name=_user.name;
+    var password=_user.password;
+    //查询数据库是否有该用户
+    User.findOne({name:name},function(err,user){
+        if(err){
+            console.log(err)
+        }
+        if(!user){
+            return res.redirect('/');
+        }
+        //匹配密码
+        //用户提交的密码是明文的数据库是加密后的密码所以这个时候需要调用这个user实例上的方法
+        //传入当前密码，拿到一个回掉的方法
+        //isMatch通过他看是否匹配正确
+        user.comparePassword(password, function(err, isMatch) {
+            if (err) {
+                console.log(err)
+            }
+            if (isMatch) {
+                //req.session.user = user
+                return res.redirect('/')
+            } else {
+                console.log('不匹配')
+                //return res.redirect('/signin')
+            }
+        })
+    })
+})
+
+
+
 // index page 首页
 app.get('/', function (req, res)  {
     Movie.fetch(function (err, movies) {

@@ -4,6 +4,7 @@
   "description": "node_film movie",
   "main": "app.js",
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "jade": "^1.11.0",
