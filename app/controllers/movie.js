@@ -1,15 +1,23 @@
 var Movie = require('../models/movie.js'); // 载入mongoose编译后的模型movie
 var _underscore = require('underscore'); // _.extend用新对象里的字段替换老的字段
+var Comment = require('../models/comment'); // 载入mongoose编译后的模型comment
 
 
 // detail page 详情页
 exports.detail = function(req, res) {
     var id = req.params.id;
     Movie.findById(id, function(err, movie) {
-        res.render('detail', {
-            title: 'i_movie' + movie.title,
-            movie: movie
-        });
+        Comment
+        .find({movie: id})
+        .populate('from', 'name')
+        .exec(function(err, comments) {
+            console.log(comments)
+            res.render('detail', {
+                title: 'i_movie' + movie.title,
+                movie: movie,
+                comments: comments
+            });
+        })
     });
 };
 

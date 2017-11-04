@@ -1,6 +1,7 @@
 var Index = require('../app/controllers/index');
 var Movie = require('../app/controllers/movie');
 var User = require('../app/controllers/user');
+var Comment = require('../app/controllers/comment');
 
 module.exports = function(app) {
     //pre handel user
@@ -28,4 +29,8 @@ module.exports = function(app) {
     app.post('/admin/movie',User.signinRequired, User.adminRequired, Movie.save);//后台录入页提交
     app.get('/admin/movie/list',User.signinRequired, User.adminRequired, Movie.list);//管理视频列表页
     app.delete('/admin/movie/list',User.signinRequired, User.adminRequired, Movie.del);//删除视频列表页
+
+
+    // Comment
+    app.post('/user/comment', User.signinRequired, Comment.save)
 }
