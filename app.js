@@ -30,7 +30,7 @@ console.log('MongoDB connection success!');
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-app.set('views', './views/pages'); // 设置视图默认的文件路径
+app.set('views', './app/views/pages'); // 设置视图默认的文件路径
 app.set('view engine', 'jade'); // 设置视图引擎：jade
 //session依赖于cookies
 app.use(cookieParser());
