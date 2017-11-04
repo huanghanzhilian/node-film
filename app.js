@@ -1,20 +1,26 @@
 var express = require('express');   //加载模块
 var app=express();                  //启动web服务器
-
-
 var port = process.env.PORT || 3000;    // 设置端口号：3000
+// 引入path模块的作用：因为页面样式的路径放在了bower_components，告诉express，请求页面里所过来的请求中，如果有请求样式或脚本，都让他们去bower_components中去查找
+var path = require('path');
+var cookieParser = require('cookie-parser')
+var session = require('express-session')
+var mongoose=require('mongoose');              // 加载mongoose模块
+var mongoStore = require('connect-mongo')(session);//会话持久
+var dbUrl='mongodb://localhost:27017/imovie';
+
+
 app.listen(port);                       // 监听 port[3000]端口
 console.log('是否启动'+port);
 
-// 引入path模块的作用：因为页面样式的路径放在了bower_components，告诉express，请求页面里所过来的请求中，如果有请求样式或脚本，都让他们去bower_components中去查找
-var path = require('path');
 
 
 
 
-var mongoose=require('mongoose');              // 加载mongoose模块
+
+
 //mongoose.connect('mongodb:localhost/film');    // 连接mongodb本地数据库imovie
-mongoose.connect('mongodb://localhost:27017/imovie'); // 连接mongodb本地数据库imovie
+mongoose.connect(dbUrl); // 连接mongodb本地数据库imovie
 console.log('MongoDB connection success!');
 
 /*  mongoose 简要知识点补充
@@ -40,9 +46,24 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 var _underscore = require('underscore'); // _.extend用新对象里的字段替换老的字段
 
+//session依赖于cookies
+app.use(cookieParser());
+app.use(session({
+    secret:'huang',
+    store: new mongoStore({
+        url :dbUrl,
+        collection: 'sessions'
+    }),
+    resave:false,
+    saveUninitialized:true
+}));
+
 
 app.set('views','./views/pages');       // 设置视图默认的文件路径
 app.set('view engine','jade');          // 设置视图引擎：jade
+
+
+
 
 var Movie=require('./models/movie.js');  // 载入mongoose编译后的模型movie
 var User=require('./models/user.js');  // 载入mongoose编译后的模型user
@@ -115,7 +136,7 @@ app.post('/user/signin',function(req,res){
                 console.log(err)
             }
             if (isMatch) {
-                //req.session.user = user
+                req.session.user = user;
                 return res.redirect('/')
             } else {
                 console.log('不匹配')
@@ -125,10 +146,21 @@ app.post('/user/signin',function(req,res){
     })
 })
 
-
+//logout
+app.get('/logout',function(req,res){
+    delete req.session.user;
+    delete app.locals.user;
+    res.redirect('/')
+})
 
 // index page 首页
 app.get('/', function (req, res)  {
+    console.log('看看有没有session')
+    console.log(req.session.user)
+    var _user=req.session.user;
+    if(_user){
+        app.locals.user=_user;
+    }
     Movie.fetch(function (err, movies) {
         if (err) {
             console.log(err);
