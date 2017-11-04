@@ -12,6 +12,10 @@ var UserSchema=new mongoose.Schema({
 		type:String
 	},
 	password:String,
+	role:{
+		type:Number,
+		default:0
+	},
 	meta:{//录入数据或更新时，时间记录
 		createAt:{//创建时间
 			type:Date,//日期类型
