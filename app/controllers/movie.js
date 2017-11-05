@@ -10,6 +10,7 @@ exports.detail = function(req, res) {
         Comment
         .find({movie: id})
         .populate('from', 'name')
+        .populate('reply.to reply.from', 'name')
         .exec(function(err, comments) {
             console.log(comments)
             res.render('detail', {

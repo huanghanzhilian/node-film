@@ -7,8 +7,18 @@ var ObjectId = Schema.Types.ObjectId
 var CommentSchema=new mongoose.Schema({
 	movie: {type: ObjectId, ref: 'movie'},
   	from: {type: ObjectId, ref: 'user'},
-  	to: {type: ObjectId, ref: 'user'},
   	content: String,
+	reply: [{
+		from: {
+			type: ObjectId,
+			ref: 'user'
+		},
+		to: {
+			type: ObjectId,
+			ref: 'user'
+		},
+		content: String
+	}],
 	meta:{//录入数据或更新时，时间记录
 		createAt:{//创建时间
 			type:Date,//日期类型
