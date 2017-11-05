@@ -1,5 +1,7 @@
 //引入mongoose建模工具模块
 var mongoose=require('mongoose');
+var Schema = mongoose.Schema
+var ObjectId = Schema.Types.ObjectId
 
 //声明一个MovieSchema调用mongoose的Schema方法传入对象
 var MovieSchema=new mongoose.Schema({
@@ -12,6 +14,10 @@ var MovieSchema=new mongoose.Schema({
 	flash:String,//地址
 	poster:String,//海报地址
 	year:Number,//年份
+	category: {
+		type: ObjectId,
+		ref: 'category'
+	},
 	meta:{//录入数据或更新时，时间记录
 		createAt:{//创建时间
 			type:Date,//日期类型

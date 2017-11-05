@@ -1,7 +1,7 @@
 var Movie = require('../models/movie.js'); // 载入mongoose编译后的模型movie
 var _underscore = require('underscore'); // _.extend用新对象里的字段替换老的字段
 var Comment = require('../models/comment'); // 载入mongoose编译后的模型comment
-
+var Category = require('../models/category');
 
 // detail page 详情页
 exports.detail = function(req, res) {
@@ -24,19 +24,13 @@ exports.detail = function(req, res) {
 
 // admin new page 后台录入页
 exports.new = function(req, res) {
-    res.render('admin', {
-        title: 'i_movie 后台录入页',
-        movie: {
-            title: '',
-            doctor: '',
-            country: '',
-            year: '',
-            poster: '',
-            flash: '',
-            summary: '',
-            language: ''
-        }
-    });
+    Category.find({}, function(err, categories) {
+        res.render('admin', {
+            title: 'imooc 后台录入页',
+            categories: categories,
+            movie: {}
+        })
+    })
 };
 
 
@@ -46,10 +40,13 @@ exports.update = function(req, res) {
     var id = req.params.id;
     if (id) {
         Movie.findById(id, function(err, movie) {
-            res.render('admin', {
-                title: 'imovie 后台更新页',
-                movie: movie
-            });
+            Category.find({}, function(err, categories) {
+                res.render('admin', {
+                    title: 'imovie 后台更新页',
+                    movie: movie,
+                    categories:categories
+                });
+            })
         });
     }
 };
@@ -61,7 +58,7 @@ exports.save = function(req, res) {
     var id = req.body.movie._id || "";
     var movieObj = req.body.movie || "";
     var _movie = null;
-    if (id !== 'undefined') { // 已经存在的电影数据
+    if (id) { // 已经存在的电影数据
         Movie.findById(id, function(err, movie) {
             if (err) {
                 console.log(err);
@@ -71,25 +68,29 @@ exports.save = function(req, res) {
                 if (err) {
                     console.log(err);
                 }
+                /*Category.findById(movieObj.category, function(err, category) {
+                    console.log(category)
+                    category.movies.push(movie.id);
+                    category.save(function(err, category) {
+                        res.redirect('/movie/' + movie._id);
+                    })
+                })*/
                 res.redirect('/movie/' + movie._id);
             });
         });
     } else { // 新加的电影
-        _movie = new Movie({
-            doctor: movieObj.doctor,
-            title: movieObj.title,
-            country: movieObj.country,
-            language: movieObj.language,
-            year: movieObj.year,
-            poster: movieObj.poster,
-            summary: movieObj.summary,
-            flash: movieObj.flash
-        });
+        _movie = new Movie(movieObj);
+        var categoryId=movieObj.category;
         _movie.save(function(err, movie) {
             if (err) {
                 console.log(err);
             }
-            res.redirect('/movie/' + movie._id);
+            Category.findById(categoryId, function(err, category) {
+                category.movies.push(movie.id);
+                category.save(function(err, category) {
+                    res.redirect('/movie/' + movie._id);
+                })
+            })
         });
     }
 };

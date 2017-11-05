@@ -1,7 +1,28 @@
-var Movie = require('../models/movie.js'); // 载入mongoose编译后的模型movie
+var Movie = require('../models/movie'); // 载入mongoose编译后的模型movie
+var Category = require('../models/category');
+
 // index page 首页
 exports.index = function(req, res) {
-	console.log('看看有没有session')
+	Category
+		.find({})
+		.populate({
+			path: 'movies',
+			select: 'title poster',
+			options: {
+				limit: 6
+			}
+		})
+		.exec(function(err, categories) {
+			if (err) {
+				console.log(err)
+			}
+			console.log(categories)
+			res.render('index', {
+				title: 'imooc 首页',
+				categories: categories
+			})
+		})
+	/*console.log('看看有没有session')
 	console.log(req.session.user)
 
 	Movie.fetch(function(err, movies) {
@@ -12,5 +33,5 @@ exports.index = function(req, res) {
 			title: 'i_movie 首页',
 			movies: movies
 		});
-	});
+	});*/
 }
