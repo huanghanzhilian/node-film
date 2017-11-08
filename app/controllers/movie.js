@@ -3,6 +3,35 @@ var _underscore = require('underscore'); // _.extend用新对象里的字段替�
 var Comment = require('../models/comment'); // 载入mongoose编译后的模型comment
 var Category = require('../models/category');
 
+
+
+var fs = require('fs')
+var path = require('path')
+
+
+// admin poster
+exports.savePoster = function(req, res, next) {
+    var posterData = req.files.uploadPoster
+    var filePath = posterData.path
+    var originalFilename = posterData.originalFilename
+
+    if (originalFilename) {
+        fs.readFile(filePath, function(err, data) {
+            var timestamp = Date.now()
+            var type = posterData.type.split('/')[1]
+            var poster = timestamp + '.' + type
+            var newPath = path.join(__dirname, '../../', '/public/upload/' + poster)
+
+            fs.writeFile(newPath, data, function(err) {
+                req.poster = poster
+                next()
+            })
+        })
+    } else {
+        next()
+    }
+}
+
 // detail page 详情页
 exports.detail = function(req, res) {
     var id = req.params.id;
@@ -58,6 +87,11 @@ exports.save = function(req, res) {
     var id = req.body.movie._id || "";
     var movieObj = req.body.movie || "";
     var _movie = null;
+
+    if (req.poster) {
+        movieObj.poster = req.poster
+    }
+
     if (id) { // 已经存在的电影数据
         Movie.findById(id, function(err, movie) {
             if (err) {

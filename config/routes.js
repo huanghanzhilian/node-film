@@ -4,6 +4,12 @@ var User = require('../app/controllers/user');
 var Comment = require('../app/controllers/comment');
 var Category = require('../app/controllers/category');
 
+var multiparty = require('connect-multiparty')
+var multipartMiddleware = multiparty();
+
+var multer  = require('multer')
+var upload = multer({ dest: 'uploads/' })
+
 module.exports = function(app) {
     //pre handel user
     app.use(function(req, res, next) {
@@ -27,7 +33,7 @@ module.exports = function(app) {
     app.get('/movie/:id', Movie.detail);//查看视频页
     app.get('/admin/movie/new',User.signinRequired, User.adminRequired, Movie.new);//后台录入页
     app.get('/admin/movie/update/:id',User.signinRequired, User.adminRequired, Movie.update);//修改视频信息页
-    app.post('/admin/movie',User.signinRequired, User.adminRequired, Movie.save);//后台录入页提交
+    app.post('/admin/movie',User.signinRequired, User.adminRequired,multipartMiddleware, Movie.savePoster,Movie.save);//后台录入页提交
     app.get('/admin/movie/list',User.signinRequired, User.adminRequired, Movie.list);//管理视频列表页
     app.delete('/admin/movie/list',User.signinRequired, User.adminRequired, Movie.del);//删除视频列表页
 

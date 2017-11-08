@@ -11,6 +11,11 @@ var mongoStore = require('connect-mongo')(session); //会话持久
 var dbUrl = 'mongodb://localhost:27017/imovie';
 var logger = require('morgan');
 
+var multipart = require('connect-multiparty');
+var multer  = require('multer')
+var upload = multer({ dest: 'uploads/' })
+
+
 
 //mongoose.connect('mongodb:localhost/film');    // 连接mongodb本地数据库imovie
 mongoose.connect(dbUrl); // 连接mongodb本地数据库imovie
@@ -34,6 +39,10 @@ app.set('views', './app/views/pages'); // 设置视图默认的文件路径
 app.set('view engine', 'jade'); // 设置视图引擎：jade
 //session依赖于cookies
 app.use(cookieParser());
+//app.use(express.multipart())
+//app.use(require('connect-multiparty')());
+//app.use(require('connect-multiparty')());
+// app.use(multipart());
 app.use(session({
     secret: 'huang',
     store: new mongoStore({
