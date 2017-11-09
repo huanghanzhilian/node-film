@@ -35,6 +35,14 @@ exports.savePoster = function(req, res, next) {
 // detail page 详情页
 exports.detail = function(req, res) {
     var id = req.params.id;
+    //每次访问更新pv
+    Movie.update({_id: id}, {$inc: {pv: 1}}, function(err) {
+        if (err) {
+            console.log(err)
+        }
+    })
+
+
     Movie.findById(id, function(err, movie) {
         Comment
         .find({movie: id})

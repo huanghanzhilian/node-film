@@ -14,6 +14,10 @@ var MovieSchema=new mongoose.Schema({
 	flash:String,//地址
 	poster:String,//海报地址
 	year:Number,//年份
+	pv: {
+		type: Number,
+		default:0//默认值创建的时间
+	},
 	category: {
 		type: ObjectId,
 		ref: 'category'
