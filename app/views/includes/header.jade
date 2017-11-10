@@ -3,7 +3,7 @@
 		.page-header
 			h1=title
 			.col-md-4
-				small 重度科幻迷1
+				small movie
 			.col-md-8
 				form(method='GET', action='/results')
 					.input-group.col-sm-4.pull-right
@@ -13,7 +13,7 @@
 .navbar.navbar-default.navbar-fixed-bottom
 	.container
 		.navbar-header
-			a.navber-brand(href="/") 重度科幻迷
+			a.navber-brand(href="/") movie
 		if user
 			p.navbar-text.navbar-right
 				span 欢迎您，#{user.name}

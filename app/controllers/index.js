@@ -17,7 +17,7 @@ exports.index = function(req, res) {
 				console.log(err)
 			}
 			res.render('index', {
-				title: 'imooc 首页',
+				title: '首页',
 				categories: categories
 			})
 		})
@@ -67,7 +67,7 @@ exports.search = function(req, res) {
 				var results = movies.slice(index, index + count)
 
 				res.render('results', {
-					title: 'imooc 结果列表页面',
+					title: '结果列表页面',
 					keyword: category.name,
 					currentPage: (page + 1),
 					query: 'cat=' + catId,
@@ -87,7 +87,7 @@ exports.search = function(req, res) {
 				var results = movies.slice(index, index + count)
 
 				res.render('results', {
-					title: 'imooc 结果列表页面',
+					title: '结果列表页面',
 					keyword: q,
 					currentPage: (page + 1),
 					query: 'q=' + q,
